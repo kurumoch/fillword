@@ -11,7 +11,11 @@ import com.googlecode.lanterna.terminal.Terminal;
 import client.models.Level;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 //можно было бы отделить вью от контроллера
@@ -25,6 +29,7 @@ public class Game {
     private String selectedWord;
     private ArrayList<TerminalPosition> solved;
     private ArrayList<TerminalPosition> selected;
+    private Instant start;
 
     public Game(Terminal terminal, Level level) throws IOException {
         this.terminal = terminal;
@@ -35,6 +40,7 @@ public class Game {
         selected = new ArrayList<>();
         state = State.SEARCH;
         terminal.setCursorVisible(true);
+        start = Instant.now();
     }
 
     private void drawFrame() throws IOException {
@@ -116,8 +122,9 @@ public class Game {
                 "Состояние: " + state.name(), SGR.BOLD);
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 2),
                 "Слов осталось: " + level.getWordsToSolve(), SGR.BOLD);
+        Instant end = Instant.now();
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 4),
-                "Время: ", SGR.BOLD);
+                "Время: " + Duration.between(start, end).getSeconds(), SGR.BOLD);
 
         terminal.setCursorPosition(position);
         terminal.flush();
@@ -166,6 +173,17 @@ public class Game {
         terminal.setCursorPosition(START_POSITION.withRelative(1, 1));
         terminal.flush();
         drawInfo();
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    drawInfo();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 1000);
         graphics = terminal.newTextGraphics();
         KeyStroke keyStroke = terminal.readInput();
         while (keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF) {
