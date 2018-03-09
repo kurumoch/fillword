@@ -123,9 +123,8 @@ public class Game {
                 "Состояние: " + state.name(), SGR.BOLD);
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 2),
                 "Слов осталось: " + level.getWordsToSolve(), SGR.BOLD);
-        Instant end = Instant.now();
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 4),
-                "Время: " + Duration.between(start, end).getSeconds(), SGR.BOLD);
+                "Время: " + Duration.between(start, Instant.now()).getSeconds(), SGR.BOLD);
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 6),
                 "Выбраное слово: " + selectedWord, SGR.BOLD);
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 10),
@@ -186,19 +185,11 @@ public class Game {
         terminal.flush();
         drawInfo();
         timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    drawInfo();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 0, 200);
+        timer.schedule(new InfoUpdater(), 0, 200);
         graphics = terminal.newTextGraphics();
-        KeyStroke keyStroke = terminal.readInput();
-        while (keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF && level.getWordsToSolve() != 0) {
+        KeyStroke keyStroke;
+        do {
+            keyStroke = terminal.readInput();
             switch (keyStroke.getKeyType()) {
                 case ArrowUp:
                     moveCursor(0, -1);
@@ -227,9 +218,12 @@ public class Game {
                     break;
             }
             terminal.flush();
-            keyStroke = terminal.readInput();
+
         }
+        while (keyStroke.getKeyType() != KeyType.Escape &&
+                keyStroke.getKeyType() != KeyType.EOF && level.getWordsToSolve() != 0);
         timer.cancel();
+        sendResults();
     }
 
     private void submit(String s) {
@@ -252,5 +246,22 @@ public class Game {
 
     private void markAsSolved() {
         solved.addAll(selected);
+    }
+
+    public void sendResults() {
+//         Math.round(Duration.between(start, Instant.now()).getSeconds());
+    }
+
+
+
+    private class InfoUpdater extends TimerTask {
+        @Override
+        public void run() {
+            try {
+                drawInfo();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
