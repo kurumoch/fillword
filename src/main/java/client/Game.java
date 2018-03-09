@@ -34,6 +34,7 @@ public class Game {
         solved = new ArrayList<>();
         selected = new ArrayList<>();
         state = State.SEARCH;
+        terminal.setCursorVisible(true);
     }
 
     private void drawFrame() throws IOException {
@@ -90,15 +91,15 @@ public class Game {
             for (int j = 0; j < SIDE_LENGTH; j++) {
                 if (!isSolved(2 * i + 1, j + 1))
                     graphics.putString(getRelative(2 * i + 1, j + 1),
-                            String.valueOf(level.getField().charAt(SIDE_LENGTH * i + j)) + " ");
+                            String.valueOf(level.getField().charAt(SIDE_LENGTH * i + j)) + " ", SGR.BOLD);
                 else {
                     graphics.setBackgroundColor(TextColor.ANSI.GREEN);
                     if (isSolved(2 * i, j + 1))
-                        graphics.putString(getRelative(2 * i, j + 1), " ", SGR.BOLD);
+                        graphics.putString(getRelative(2 * i, j + 1), " ");
                     if (isSolved(2 * i + 2, j + 1))
-                        graphics.putString(getRelative(2 * i + 2, j + 1), " ", SGR.BOLD);
+                        graphics.putString(getRelative(2 * i + 2, j + 1), " ");
                     graphics.putString(getRelative(2 * i + 1, j + 1),
-                            String.valueOf(level.getField().charAt(SIDE_LENGTH * i + j)), SGR.BOLD);
+                            String.valueOf(level.getField().charAt(SIDE_LENGTH * i + j)));
                     graphics.setBackgroundColor(TextColor.ANSI.BLACK);
                 }
             }
@@ -112,11 +113,11 @@ public class Game {
     private void drawInfo() throws IOException {
         TerminalPosition position = terminal.getCursorPosition();
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 0),
-                "Состояние: " + state.name());
+                "Состояние: " + state.name(), SGR.BOLD);
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 2),
-                "Слов осталось: " + level.getWordsToSolve());
+                "Слов осталось: " + level.getWordsToSolve(), SGR.BOLD);
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 4),
-                "Время: ");
+                "Время: ", SGR.BOLD);
 
         terminal.setCursorPosition(position);
         terminal.flush();
