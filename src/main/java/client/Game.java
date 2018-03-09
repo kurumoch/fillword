@@ -1,3 +1,5 @@
+package client;
+
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -6,13 +8,14 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
-import models.Level;
+import client.models.Level;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Game {
 
+//можно было бы отделить вью от контроллера
+public class Game {
     private Terminal terminal;
     private Level level;
     private TextGraphics graphics;

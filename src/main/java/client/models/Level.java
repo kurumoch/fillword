@@ -1,4 +1,4 @@
-package models;
+package client.models;
 
 public class Level {
     private String field;
