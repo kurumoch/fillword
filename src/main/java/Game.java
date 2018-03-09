@@ -33,30 +33,56 @@ public class Game {
         state = State.SEARCH;
     }
 
+    private void drawFrame() throws IOException {
+
+        graphics.drawLine(0, 0, terminal.getTerminalSize().getColumns(), 0, 'Ж');
+
+        graphics.drawLine(0, 0, 0, terminal.getTerminalSize().getRows(), '*');
+    }
+
+    private boolean isSolved(int i, int j) {
+        return solved.contains(START_POSITION.withRelative(i, j));
+    }
+
+    private TerminalPosition getRelative(int i, int j) {
+        return START_POSITION.withRelative(i, j);
+    }
+
     private void drawLevel() throws IOException {
         TerminalPosition position = terminal.getCursorPosition();
-        graphics.drawRectangle(START_POSITION,
-                new TerminalSize(SIDE_LENGTH + 2, SIDE_LENGTH + 2), '#');
+        drawFrame();
         for (int i = 0; i < SIDE_LENGTH; i++) {
             for (int j = 0; j < SIDE_LENGTH; j++) {
-                if (!solved.contains(START_POSITION.withRelative(i + 1, j + 1)))
-                    graphics.putString(START_POSITION.withRelative(i + 1, j + 1),
-                            String.valueOf(level.getField().charAt(SIDE_LENGTH * i + j)));
+                if (!isSolved(2 * i + 1, j + 1))
+                    graphics.putString(getRelative(2 * i + 1, j + 1),
+                            String.valueOf(level.getField().charAt(SIDE_LENGTH * i + j)) + " ");
                 else {
                     graphics.setBackgroundColor(TextColor.ANSI.GREEN);
-                    graphics.putString(START_POSITION.withRelative(i + 1, j + 1),
+                    if (isSolved(2 * i, j + 1))
+                        graphics.putString(getRelative(2 * i, j + 1), " ", SGR.BOLD);
+                    if (isSolved(2 * i + 2, j + 1))
+                        graphics.putString(getRelative(2 * i + 2, j + 1), " ", SGR.BOLD);
+                    graphics.putString(getRelative(2 * i + 1, j + 1),
                             String.valueOf(level.getField().charAt(SIDE_LENGTH * i + j)), SGR.BOLD);
                     graphics.setBackgroundColor(TextColor.ANSI.BLACK);
                 }
             }
         }
+        graphics.drawRectangle(START_POSITION,
+                new TerminalSize(2 * SIDE_LENGTH + 1, SIDE_LENGTH + 2), '#');
         terminal.setCursorPosition(position);
         terminal.flush();
     }
 
-    private void drawState() throws IOException {
+    private void drawInfo() throws IOException {
         TerminalPosition position = terminal.getCursorPosition();
-        graphics.putString(START_POSITION.withRelative(SIDE_LENGTH + 5, 0), "State:" + state.name());
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 5, 0),
+                "Состояние: " + state.name());
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 5, 2),
+                "Слов осталось: " + level.getWordsToSolve());
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 5, 4),
+                "Время: ");
+
         terminal.setCursorPosition(position);
         terminal.flush();
     }
@@ -64,7 +90,7 @@ public class Game {
     private boolean ifNotBorder(TerminalPosition newPosition) {
         return START_POSITION.getColumn() < newPosition.getColumn() &&
                 START_POSITION.getRow() < newPosition.getRow() &&
-                START_POSITION.getColumn() + SIDE_LENGTH + 1 > newPosition.getColumn() &&
+                START_POSITION.getColumn() + 2 * SIDE_LENGTH + 1 > newPosition.getColumn() &&
                 START_POSITION.getRow() + SIDE_LENGTH + 1 > newPosition.getRow();
     }
 
@@ -82,6 +108,10 @@ public class Game {
         TerminalPosition newPosition = position.withRelative(di, dj);
         if (ifNotBorder(newPosition)) {
             if (state == State.SELECT && !selected.contains(newPosition) && !solved.contains(newPosition)) {
+                if (di > 0)
+                    select(position.withRelative(1, 0));
+                if (di < 0)
+                    select(position.withRelative(-1, 0));
                 select(position);
                 terminal.setCursorPosition(newPosition);
                 terminal.flush();
@@ -98,11 +128,10 @@ public class Game {
         drawLevel();
         terminal.setCursorPosition(START_POSITION.withRelative(1, 1));
         terminal.flush();
-        drawState();
+        drawInfo();
         graphics = terminal.newTextGraphics();
         KeyStroke keyStroke = terminal.readInput();
         while (keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF) {
-
             switch (keyStroke.getKeyType()) {
                 case ArrowUp:
                     moveCursor(0, -1);
@@ -111,10 +140,10 @@ public class Game {
                     moveCursor(0, 1);
                     break;
                 case ArrowLeft:
-                    moveCursor(-1, 0);
+                    moveCursor(-2, 0);
                     break;
                 case ArrowRight:
-                    moveCursor(1, 0);
+                    moveCursor(2, 0);
                     break;
                 case Enter:
                     if (state == State.SEARCH && !solved.contains(terminal.getCursorPosition()))
@@ -126,7 +155,7 @@ public class Game {
                         processReply(getServerReply());
                         selected = new ArrayList<>();
                     }
-                    drawState();
+                    drawInfo();
                     break;
                 default:
                     break;

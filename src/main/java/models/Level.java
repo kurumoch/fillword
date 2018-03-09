@@ -1,8 +1,8 @@
 package models;
 
 public class Level {
-    String field;
-    int wordsToSolve;
+    private String field;
+    private int wordsToSolve;
 
     public Level(String field, int wordsToSolve) {
         this.field = field;
@@ -15,5 +15,9 @@ public class Level {
 
     public String getField() {
         return field;
+    }
+
+    public int getWordsToSolve() {
+        return wordsToSolve;
     }
 }
