@@ -34,31 +34,55 @@ public class Game {
     }
 
     private void drawLevel() throws IOException {
-        graphics.drawRectangle(START_POSITION, new TerminalSize(SIDE_LENGTH + 2, SIDE_LENGTH + 2), '#');
+        TerminalPosition position = terminal.getCursorPosition();
+        graphics.drawRectangle(START_POSITION,
+                new TerminalSize(SIDE_LENGTH + 2, SIDE_LENGTH + 2), '#');
         for (int i = 0; i < SIDE_LENGTH; i++) {
             for (int j = 0; j < SIDE_LENGTH; j++) {
-                graphics.setCharacter(START_POSITION.withRelative(i + 1, j + 1),
-                        level.getField().charAt(SIDE_LENGTH * i + j));
+                if (!solved.contains(START_POSITION.withRelative(i + 1, j + 1)))
+                    graphics.putString(START_POSITION.withRelative(i + 1, j + 1),
+                            String.valueOf(level.getField().charAt(SIDE_LENGTH * i + j)));
+                else {
+                    graphics.setBackgroundColor(TextColor.ANSI.GREEN);
+                    graphics.putString(START_POSITION.withRelative(i + 1, j + 1),
+                            String.valueOf(level.getField().charAt(SIDE_LENGTH * i + j)), SGR.BOLD);
+                    graphics.setBackgroundColor(TextColor.ANSI.BLACK);
+                }
             }
         }
+        terminal.setCursorPosition(position);
         terminal.flush();
+    }
+
+    private boolean ifNotBorder(TerminalPosition newPosition) {
+        return START_POSITION.getColumn() < newPosition.getColumn() &&
+                START_POSITION.getRow() < newPosition.getRow() &&
+                START_POSITION.getColumn() + SIDE_LENGTH > newPosition.getColumn() &&
+                START_POSITION.getRow() + SIDE_LENGTH > newPosition.getRow();
+    }
+
+    private void select(TerminalPosition position) {
+        graphics.setBackgroundColor(TextColor.ANSI.BLUE);
+        graphics.putString(position,
+                String.valueOf(graphics.getCharacter(position).getCharacter()), SGR.BOLD);
+        selected.add(position);
+        graphics.setBackgroundColor(TextColor.ANSI.BLACK);
+        graphics.setForegroundColor(TextColor.ANSI.WHITE);
     }
 
     private void moveCursor(int di, int dj) throws IOException {
         TerminalPosition position = terminal.getCursorPosition();
         TerminalPosition newPosition = position.withRelative(di, dj);
-        if (START_POSITION.getColumn() < newPosition.getColumn() &&
-                START_POSITION.getRow() < newPosition.getRow() &&
-                START_POSITION.getColumn() + SIDE_LENGTH > newPosition.getColumn() &&
-                START_POSITION.getRow() + SIDE_LENGTH > newPosition.getRow()) {
-            if (state == State.SELECT) {
-
-                graphics.setBackgroundColor(TextColor.ANSI.BLUE);
-                graphics.putString(position,
-                        String.valueOf(graphics.getCharacter(position).getCharacter()), SGR.BOLD);
+        if (ifNotBorder(newPosition)) {
+            if (state == State.SELECT && !selected.contains(newPosition) && !solved.contains(newPosition)) {
+                select(position);
+                terminal.setCursorPosition(newPosition);
+                terminal.flush();
             }
-            terminal.setCursorPosition(newPosition);
-            terminal.flush();
+            if (state == State.SEARCH) {
+                terminal.setCursorPosition(newPosition);
+                terminal.flush();
+            }
         }
     }
 
@@ -68,9 +92,6 @@ public class Game {
         terminal.setCursorPosition(START_POSITION.withRelative(1, 1));
         terminal.flush();
         graphics = terminal.newTextGraphics();
-        graphics.setForegroundColor(TextColor.ANSI.WHITE);
-        graphics.setBackgroundColor(TextColor.ANSI.BLACK);
-
         KeyStroke keyStroke = terminal.readInput();
         while (keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF) {
 
@@ -88,13 +109,14 @@ public class Game {
                     moveCursor(1, 0);
                     break;
                 case Enter:
-                    if (state == State.SEARCH)
+                    if (state == State.SEARCH && !solved.contains(terminal.getCursorPosition()))
                         state = State.SELECT;
                     else {
                         moveCursor(0, 0);
-                        submit(selectedWord);
                         state = State.SEARCH;
+                        submit(selectedWord);
                         processReply(getServerReply());
+                        selected = new ArrayList<>();
                     }
                     break;
                 default:
@@ -113,19 +135,15 @@ public class Game {
         return true;
     }
 
-    private void processReply(boolean reply) {
+    private void processReply(boolean reply) throws IOException {
         if (reply) {
-            level.solve();
+            level.solveWord();
             markAsSolved();
         }
-        redrawLevel();
+        drawLevel();
     }
 
     private void markAsSolved() {
         solved.addAll(selected);
-    }
-
-    private void redrawLevel() {
-
     }
 }

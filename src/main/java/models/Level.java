@@ -9,7 +9,7 @@ public class Level {
         this.wordsToSolve = wordsToSolve;
     }
 
-    public void solve() {
+    public void solveWord() {
         wordsToSolve--;
     }
 
