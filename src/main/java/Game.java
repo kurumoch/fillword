@@ -34,10 +34,42 @@ public class Game {
     }
 
     private void drawFrame() throws IOException {
-
+//        graphics.setBackgroundColor(TextColor.ANSI.GREEN);
+//        graphics.setForegroundColor(TextColor.ANSI.RED);
+        graphics.drawLine(42, 0,
+                42, terminal.getTerminalSize().getRows() - 1, 'ß');
+//        graphics.setForegroundColor(TextColor.ANSI.WHITE);
+//        graphics.setBackgroundColor(TextColor.ANSI.BLUE);
+        graphics.drawLine(41, 0,
+                41, terminal.getTerminalSize().getRows() - 1, '¶');
+//        graphics.setBackgroundColor(TextColor.ANSI.BLUE);
         graphics.drawLine(0, 0, terminal.getTerminalSize().getColumns(), 0, 'Ж');
-
-        graphics.drawLine(0, 0, 0, terminal.getTerminalSize().getRows(), '*');
+//        graphics.setBackgroundColor(TextColor.ANSI.YELLOW);
+        graphics.drawLine(0, 1, terminal.getTerminalSize().getColumns(), 1, 'Ф');
+//        graphics.setBackgroundColor(TextColor.ANSI.WHITE);
+//        graphics.setForegroundColor(TextColor.ANSI.BLUE);
+        graphics.drawLine(0, 0, 0, terminal.getTerminalSize().getRows(), '@');
+//        graphics.setForegroundColor(TextColor.ANSI.YELLOW);
+//        graphics.setBackgroundColor(TextColor.ANSI.CYAN);
+        graphics.drawLine(1, 0, 1, terminal.getTerminalSize().getRows(), '*');
+//        graphics.setForegroundColor(TextColor.ANSI.WHITE);
+//        graphics.setBackgroundColor(TextColor.ANSI.RED);
+        graphics.drawLine(terminal.getTerminalSize().getColumns() - 1, 0,
+                terminal.getTerminalSize().getColumns() - 1, terminal.getTerminalSize().getRows(), '%');
+//        graphics.setBackgroundColor(TextColor.ANSI.GREEN);
+//        graphics.setForegroundColor(TextColor.ANSI.MAGENTA);
+        graphics.drawLine(terminal.getTerminalSize().getColumns() - 2, 0,
+                terminal.getTerminalSize().getColumns() - 2, terminal.getTerminalSize().getRows(), '∆');
+//        graphics.setForegroundColor(TextColor.ANSI.WHITE);
+//        graphics.setBackgroundColor(TextColor.ANSI.CYAN);
+        graphics.drawLine(0, terminal.getTerminalSize().getRows() - 1,
+                terminal.getTerminalSize().getColumns() - 1, terminal.getTerminalSize().getRows() - 1, 'Ω');
+//        graphics.setBackgroundColor(TextColor.ANSI.MAGENTA);
+//        graphics.setForegroundColor(TextColor.ANSI.BLACK);
+        graphics.drawLine(0, terminal.getTerminalSize().getRows() - 2,
+                terminal.getTerminalSize().getColumns() - 1, terminal.getTerminalSize().getRows() - 2, '∑');
+        graphics.setBackgroundColor(TextColor.ANSI.BLACK);
+        graphics.setForegroundColor(TextColor.ANSI.WHITE);
     }
 
     private boolean isSolved(int i, int j) {
@@ -76,11 +108,11 @@ public class Game {
 
     private void drawInfo() throws IOException {
         TerminalPosition position = terminal.getCursorPosition();
-        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 5, 0),
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 0),
                 "Состояние: " + state.name());
-        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 5, 2),
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 2),
                 "Слов осталось: " + level.getWordsToSolve());
-        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 5, 4),
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 4),
                 "Время: ");
 
         terminal.setCursorPosition(position);
@@ -113,6 +145,7 @@ public class Game {
                 if (di < 0)
                     select(position.withRelative(-1, 0));
                 select(position);
+                selectedWord += graphics.getCharacter(position).getCharacter();
                 terminal.setCursorPosition(newPosition);
                 terminal.flush();
             }
