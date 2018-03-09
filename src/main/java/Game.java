@@ -24,7 +24,7 @@ public class Game {
         graphics = terminal.newTextGraphics();
     }
 
-    public void drawLevel() throws IOException {
+    private void drawLevel() throws IOException {
         graphics.drawRectangle(START_POSITION, new TerminalSize(SIDE_LENGTH + 2, SIDE_LENGTH + 2), '#');
         for (int i = 0; i < SIDE_LENGTH; i++) {
             for (int j = 0; j < SIDE_LENGTH; j++) {
@@ -37,7 +37,12 @@ public class Game {
 
     private void moveCursor(int di, int dj) throws IOException {
         TerminalPosition position = terminal.getCursorPosition();
-        terminal.setCursorPosition(position.withRelative(di, dj));
+        TerminalPosition newPosition = position.withRelative(di, dj);
+        if (START_POSITION.getColumn() < newPosition.getColumn() &&
+                START_POSITION.getRow() < newPosition.getRow() &&
+                START_POSITION.getColumn() + SIDE_LENGTH > newPosition.getColumn() &&
+                START_POSITION.getRow() + SIDE_LENGTH > newPosition.getRow())
+            terminal.setCursorPosition(newPosition);
     }
 
     public void startLevel() throws IOException {
