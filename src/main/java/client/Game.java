@@ -30,6 +30,7 @@ public class Game {
     private ArrayList<TerminalPosition> solved;
     private ArrayList<TerminalPosition> selected;
     private Instant start;
+    private Timer timer;
 
     public Game(Terminal terminal, Level level) throws IOException {
         this.terminal = terminal;
@@ -125,7 +126,16 @@ public class Game {
         Instant end = Instant.now();
         graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 4),
                 "Время: " + Duration.between(start, end).getSeconds(), SGR.BOLD);
-
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 6),
+                "Выбраное слово: " + selectedWord, SGR.BOLD);
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 10),
+                "Esc — выход в меню", SGR.BOLD);
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 12),
+                "Enter — режим выбора слова", SGR.BOLD);
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 14),
+                "Для выхода из режима выбора", SGR.BOLD);
+        graphics.putString(START_POSITION.withRelative(2 * SIDE_LENGTH + 9, 15),
+                "слова нажмите Enter еще раз", SGR.BOLD);
         terminal.setCursorPosition(position);
         terminal.flush();
     }
@@ -156,6 +166,8 @@ public class Game {
                 if (di < 0)
                     select(position.withRelative(-1, 0));
                 select(position);
+                if (selectedWord.contains(" "))
+                    selectedWord = "";
                 selectedWord += graphics.getCharacter(position).getCharacter();
                 terminal.setCursorPosition(newPosition);
                 terminal.flush();
@@ -173,7 +185,7 @@ public class Game {
         terminal.setCursorPosition(START_POSITION.withRelative(1, 1));
         terminal.flush();
         drawInfo();
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -183,10 +195,10 @@ public class Game {
                     e.printStackTrace();
                 }
             }
-        }, 0, 1000);
+        }, 0, 200);
         graphics = terminal.newTextGraphics();
         KeyStroke keyStroke = terminal.readInput();
-        while (keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF) {
+        while (keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF && level.getWordsToSolve() != 0) {
             switch (keyStroke.getKeyType()) {
                 case ArrowUp:
                     moveCursor(0, -1);
@@ -208,7 +220,6 @@ public class Game {
                         state = State.SEARCH;
                         submit(selectedWord);
                         processReply(getServerReply());
-                        selected = new ArrayList<>();
                     }
                     drawInfo();
                     break;
@@ -218,6 +229,7 @@ public class Game {
             terminal.flush();
             keyStroke = terminal.readInput();
         }
+        timer.cancel();
     }
 
     private void submit(String s) {
@@ -233,6 +245,8 @@ public class Game {
             level.solveWord();
             markAsSolved();
         }
+        selected = new ArrayList<>();
+        selectedWord = "            ";
         drawLevel();
     }
 
