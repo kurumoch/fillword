@@ -61,11 +61,11 @@ public class Results {
         ArrayList<Pair<String, Integer>> scores = loadScores();
         graphics.putString(5, 3, "Результаты для уровня " + level, SGR.BOLD);
         for (int i = 0; i < scores.size(); i++) {
-            graphics.putString(7, 5 + i, String.valueOf(i) + ". " + scores.get(i).fst + " - " + scores.get(i).snd);
+            graphics.putString(7, 5 + i * 2, String.valueOf(i) + ". " + scores.get(i).fst + " - " + scores.get(i).snd);
         }
         terminal.flush();
 
-
+        keyStroke = terminal.readInput();
         while (keyStroke.getKeyType() != KeyType.EOF &&
                 keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.Enter) {
             keyStroke = terminal.readInput();

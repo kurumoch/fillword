@@ -218,7 +218,6 @@ public class Game {
                     break;
             }
             terminal.flush();
-
         }
         while (keyStroke.getKeyType() != KeyType.Escape &&
                 keyStroke.getKeyType() != KeyType.EOF && level.getWordsToSolve() != 0);

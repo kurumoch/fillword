@@ -30,8 +30,8 @@ public class ChooseLevel {
         terminal.clearScreen();
         graphics.putString(new TerminalPosition(7, 3), "Выбор уровня", SGR.BOLD);
         for (int i = 0; i < getLevelCount(); i++)
-            graphics.putString(new TerminalPosition(9, 7 + i), String.valueOf(i));
-        graphics.putString(new TerminalPosition(9, 7 + selection),
+            graphics.putString(new TerminalPosition(9, 7 + i * 2), String.valueOf(i));
+        graphics.putString(new TerminalPosition(9, 7 + selection * 2),
                 String.valueOf(selection), SGR.BOLD);
         terminal.setCursorVisible(false);
     }
