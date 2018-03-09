@@ -1,14 +1,15 @@
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import models.Level;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Game {
 
@@ -17,11 +18,19 @@ public class Game {
     private TextGraphics graphics;
     private static final TerminalPosition START_POSITION = new TerminalPosition(5, 3);
     private static final int SIDE_LENGTH = 16;
+    private State state;
+    private String selectedWord;
+    private ArrayList<TerminalPosition> solved;
+    private ArrayList<TerminalPosition> selected;
 
     public Game(Terminal terminal, Level level) throws IOException {
         this.terminal = terminal;
         this.level = level;
         graphics = terminal.newTextGraphics();
+        selectedWord = "";
+        solved = new ArrayList<>();
+        selected = new ArrayList<>();
+        state = State.SEARCH;
     }
 
     private void drawLevel() throws IOException {
@@ -41,8 +50,16 @@ public class Game {
         if (START_POSITION.getColumn() < newPosition.getColumn() &&
                 START_POSITION.getRow() < newPosition.getRow() &&
                 START_POSITION.getColumn() + SIDE_LENGTH > newPosition.getColumn() &&
-                START_POSITION.getRow() + SIDE_LENGTH > newPosition.getRow())
+                START_POSITION.getRow() + SIDE_LENGTH > newPosition.getRow()) {
+            if (state == State.SELECT) {
+
+                graphics.setBackgroundColor(TextColor.ANSI.BLUE);
+                graphics.putString(position,
+                        String.valueOf(graphics.getCharacter(position).getCharacter()), SGR.BOLD);
+            }
             terminal.setCursorPosition(newPosition);
+            terminal.flush();
+        }
     }
 
     public void startLevel() throws IOException {
@@ -71,6 +88,14 @@ public class Game {
                     moveCursor(1, 0);
                     break;
                 case Enter:
+                    if (state == State.SEARCH)
+                        state = State.SELECT;
+                    else {
+                        moveCursor(0, 0);
+                        submit(selectedWord);
+                        state = State.SEARCH;
+                        processReply(getServerReply());
+                    }
                     break;
                 default:
                     break;
@@ -78,5 +103,29 @@ public class Game {
             terminal.flush();
             keyStroke = terminal.readInput();
         }
+    }
+
+    private void submit(String s) {
+
+    }
+
+    private boolean getServerReply() {
+        return true;
+    }
+
+    private void processReply(boolean reply) {
+        if (reply) {
+            level.solve();
+            markAsSolved();
+        }
+        redrawLevel();
+    }
+
+    private void markAsSolved() {
+        solved.addAll(selected);
+    }
+
+    private void redrawLevel() {
+
     }
 }
