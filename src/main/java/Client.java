@@ -12,41 +12,20 @@ import models.Level;
 
 import java.io.IOException;
 import java.rmi.dgc.Lease;
+import java.util.Collections;
 import java.util.Random;
 
 public class Client {
 
     public static void main(String[] args) {
-         /*
-        In this second tutorial, we'll expand on how to use the Terminal interface to provide more advanced
-        functionality.
-        */
-        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
-        Terminal terminal = null;
         try {
-            terminal = defaultTerminalFactory.createTerminal();
-            terminal.enterPrivateMode();
-            terminal.setCursorPosition(5, 3);
-            terminal.flush();
-            final TextGraphics textGraphics = terminal.newTextGraphics();
-            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-
-
-
-        } catch (IOException e) {
+            DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+            Terminal terminal = defaultTerminalFactory.createTerminal();
+            Game game = new Game(terminal, new Level(String.join("",
+                    Collections.nCopies(256, "Q")), 4));
+            game.startLevel();
+        } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (terminal != null) {
-                try {
-                    /*
-                    The close() call here will exit private mode
-                     */
-                    terminal.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
