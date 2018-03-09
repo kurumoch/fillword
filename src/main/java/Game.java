@@ -54,11 +54,18 @@ public class Game {
         terminal.flush();
     }
 
+    private void drawState() throws IOException {
+        TerminalPosition position = terminal.getCursorPosition();
+        graphics.putString(START_POSITION.withRelative(SIDE_LENGTH + 5, 0), "State:" + state.name());
+        terminal.setCursorPosition(position);
+        terminal.flush();
+    }
+
     private boolean ifNotBorder(TerminalPosition newPosition) {
         return START_POSITION.getColumn() < newPosition.getColumn() &&
                 START_POSITION.getRow() < newPosition.getRow() &&
-                START_POSITION.getColumn() + SIDE_LENGTH > newPosition.getColumn() &&
-                START_POSITION.getRow() + SIDE_LENGTH > newPosition.getRow();
+                START_POSITION.getColumn() + SIDE_LENGTH + 1 > newPosition.getColumn() &&
+                START_POSITION.getRow() + SIDE_LENGTH + 1 > newPosition.getRow();
     }
 
     private void select(TerminalPosition position) {
@@ -91,6 +98,7 @@ public class Game {
         drawLevel();
         terminal.setCursorPosition(START_POSITION.withRelative(1, 1));
         terminal.flush();
+        drawState();
         graphics = terminal.newTextGraphics();
         KeyStroke keyStroke = terminal.readInput();
         while (keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF) {
@@ -118,6 +126,7 @@ public class Game {
                         processReply(getServerReply());
                         selected = new ArrayList<>();
                     }
+                    drawState();
                     break;
                 default:
                     break;
