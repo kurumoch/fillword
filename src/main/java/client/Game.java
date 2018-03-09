@@ -223,7 +223,12 @@ public class Game {
         while (keyStroke.getKeyType() != KeyType.Escape &&
                 keyStroke.getKeyType() != KeyType.EOF && level.getWordsToSolve() != 0);
         timer.cancel();
-        sendResults();
+        Results results = new Results(terminal, 1, countResults());
+        results.show();
+    }
+
+    public int countResults() {
+        return Math.round(Duration.between(start, Instant.now()).getSeconds());
     }
 
     private void submit(String s) {
@@ -247,11 +252,6 @@ public class Game {
     private void markAsSolved() {
         solved.addAll(selected);
     }
-
-    public void sendResults() {
-//         Math.round(Duration.between(start, Instant.now()).getSeconds());
-    }
-
 
 
     private class InfoUpdater extends TimerTask {

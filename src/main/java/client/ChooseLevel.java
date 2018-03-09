@@ -49,16 +49,16 @@ public class ChooseLevel {
                     redraw();
                     break;
                 case ArrowDown:
-                    if (selection < getLevelCount())
+                    if (selection < getLevelCount() - 1)
                         selection++;
                     redraw();
                     break;
                 case Enter:
-                            Game game = new Game(terminal, new Level(String.join("",
-                                    Collections.nCopies(256, "Q")), 4));
-                            game.startLevel();
-                            terminal.clearScreen();
-                            redraw();
+                    Game game = new Game(terminal, new Level(String.join("",
+                            Collections.nCopies(256, "Q")), 4, 1));
+                    game.startLevel();
+                    terminal.clearScreen();
+                    redraw();
             }
             terminal.flush();
             keyStroke = terminal.readInput();
