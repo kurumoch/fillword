@@ -9,6 +9,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
 import client.models.Level;
+import client.util.ServerIO;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -31,10 +32,12 @@ public class Game {
     private ArrayList<TerminalPosition> selected;
     private Instant start;
     private Timer timer;
+    private ServerIO io;
 
-    public Game(Terminal terminal, Level level) throws IOException {
+    public Game(Terminal terminal, int num, ServerIO io) throws IOException {
         this.terminal = terminal;
-        this.level = level;
+        this.io = io;
+        this.level = io.getLevel(num);
         graphics = terminal.newTextGraphics();
         selectedWord = "";
         solved = new ArrayList<>();
@@ -42,6 +45,7 @@ public class Game {
         state = State.SEARCH;
         terminal.setCursorVisible(true);
         start = Instant.now();
+
     }
 
     private void drawFrame() throws IOException {
@@ -209,8 +213,8 @@ public class Game {
                     else {
                         moveCursor(0, 0);
                         state = State.SEARCH;
-                        submit(selectedWord);
-                        processReply(getServerReply());
+                        boolean reply = checkWord(selectedWord);
+                        processReply(reply);
                     }
                     drawInfo();
                     break;
@@ -222,7 +226,7 @@ public class Game {
         while (keyStroke.getKeyType() != KeyType.Escape &&
                 keyStroke.getKeyType() != KeyType.EOF && level.getWordsToSolve() != 0);
         timer.cancel();
-        Results results = new Results(terminal, 1, countResults());
+        Results results = new Results(terminal, level.getNumber(), countResults(), io);
         results.show();
     }
 
@@ -230,12 +234,8 @@ public class Game {
         return Math.round(Duration.between(start, Instant.now()).getSeconds());
     }
 
-    private void submit(String s) {
-
-    }
-
-    private boolean getServerReply() {
-        return true;
+    private boolean checkWord(String s) {
+        return io.submit(s);
     }
 
     private void processReply(boolean reply) throws IOException {

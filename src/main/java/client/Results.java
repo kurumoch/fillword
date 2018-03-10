@@ -1,5 +1,6 @@
 package client;
 
+import client.util.ServerIO;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -18,12 +19,14 @@ public class Results {
     private TextGraphics graphics;
     private int level;
     private int results;
+    private ServerIO io;
 
-    public Results(Terminal terminal, int level, int results) throws IOException {
+    public Results(Terminal terminal, int level, int results, ServerIO io) throws IOException {
         this.terminal = terminal;
         graphics = terminal.newTextGraphics();
         this.level = level;
         this.results = results;
+        this.io = io;
     }
 
     public void show() throws IOException {
@@ -73,7 +76,7 @@ public class Results {
     }
 
     public void sendResults() {
-//         Math.round(Duration.between(start, Instant.now()).getSeconds());
+
     }
 
     public ArrayList<Pair<String, Integer>> loadScores() {

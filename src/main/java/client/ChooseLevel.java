@@ -1,29 +1,30 @@
 package client;
 
-import client.models.Level;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
+import client.util.ServerIO;
 
 import java.io.IOException;
-import java.util.Collections;
 
 public class ChooseLevel {
     private Terminal terminal;
     private TextGraphics graphics;
     private int selection;
+    private ServerIO io;
 
-    public ChooseLevel(Terminal terminal) throws IOException {
+    public ChooseLevel(Terminal terminal, ServerIO io) throws IOException {
         this.terminal = terminal;
         graphics = terminal.newTextGraphics();
         selection = 0;
+        this.io = io;
     }
 
     public int getLevelCount() {
-        return 5;
+        return io.getLevelCount();
     }
 
     public void redraw() throws IOException {
@@ -54,8 +55,7 @@ public class ChooseLevel {
                     redraw();
                     break;
                 case Enter:
-                    Game game = new Game(terminal, new Level(String.join("",
-                            Collections.nCopies(256, "Q")), 4, 1));
+                    Game game = new Game(terminal, selection, io);
                     game.startLevel();
                     terminal.clearScreen();
                     redraw();
