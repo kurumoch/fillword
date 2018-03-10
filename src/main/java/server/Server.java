@@ -19,15 +19,8 @@ public class Server {
                 System.out.println("Подключение установлено!");
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                new Thread(() -> {
-                    while (true)
-                        try {
-                            GameServer gameServer = new GameServer(ois, oos);
-                            gameServer.start();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                }).start();
+                GameServer gameServer = new GameServer(ois, oos);
+                new Thread(gameServer::start).start();
                 ois.close();
                 oos.close();
             }

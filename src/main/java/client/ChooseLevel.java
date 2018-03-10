@@ -23,7 +23,7 @@ public class ChooseLevel {
         this.io = io;
     }
 
-    public int getLevelCount() {
+    public int getLevelCount() throws IOException {
         return io.getLevelCount();
     }
 
@@ -37,7 +37,7 @@ public class ChooseLevel {
         terminal.setCursorVisible(false);
     }
 
-    public void start() throws IOException {
+    public void start() throws IOException, ClassNotFoundException {
         redraw();
         terminal.flush();
         KeyStroke keyStroke = terminal.readInput();

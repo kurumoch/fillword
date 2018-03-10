@@ -10,26 +10,24 @@ import com.sun.tools.javac.util.Pair;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Results {
 
     private Terminal terminal;
     private TextGraphics graphics;
-    private int level;
+    private int levelNum;
     private int results;
     private ServerIO io;
 
-    public Results(Terminal terminal, int level, int results, ServerIO io) throws IOException {
+    public Results(Terminal terminal, int levelNum, int results, ServerIO io) throws IOException {
         this.terminal = terminal;
         graphics = terminal.newTextGraphics();
-        this.level = level;
+        this.levelNum = levelNum;
         this.results = results;
         this.io = io;
     }
 
-    public void show() throws IOException {
+    public void show() throws IOException, ClassNotFoundException {
         terminal.clearScreen();
         graphics.putString(5, 3, "Ваш счет: " + results, SGR.BOLD);
         graphics.putString(5, 5, "Введите имя", SGR.BOLD);
@@ -60,8 +58,8 @@ public class Results {
         io.sendResults(nickname.toString(), results);
         terminal.clearScreen();
         terminal.setCursorVisible(false);
-        ArrayList<Pair<String, Integer>> scores = io.getScores();
-        graphics.putString(5, 3, "Результаты для уровня " + level, SGR.BOLD);
+        ArrayList<Pair<String, Integer>> scores = io.getScores(levelNum);
+        graphics.putString(5, 3, "Результаты для уровня " + levelNum, SGR.BOLD);
         for (int i = 0; i < scores.size(); i++) {
             graphics.putString(7, 5 + i * 2, String.valueOf(i) + ". " + scores.get(i).fst + " - " + scores.get(i).snd);
         }

@@ -3,6 +3,7 @@ package client.util;
 import client.models.Level;
 import com.sun.tools.javac.util.Pair;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -18,30 +19,27 @@ public class ServerIO {
         this.oos = oos;
     }
 
-    public int getLevelCount() {
-        return 5;
+    public int getLevelCount() throws IOException {
+        oos.writeUTF("A");
+        return ois.readInt();
     }
 
-    public Level getLevel(int n) {
-        return new Level(String.join("",
-                Collections.nCopies(256, "Q")), 4, 1);
+    public Level getLevel(int n) throws IOException, ClassNotFoundException {
+        oos.writeUTF("B,1");
+        return (Level) ois.readObject();
     }
 
-    public boolean submit(String s) {
-        return true;
+    public boolean submit(String s) throws IOException {
+        oos.writeUTF("C," + s);
+        return ois.readBoolean();
     }
 
-    public void sendResults(String nick, int score) {
-
+    public void sendResults(String nick, int score) throws IOException {
+        oos.writeUTF("D," + nick + "," + score);
     }
 
-    public ArrayList<Pair<String, Integer>> getScores(){
-        ArrayList<Pair<String, Integer>> out = new ArrayList<>();
-        out.add(new Pair<>("sadas", 2));
-        out.add(new Pair<>("sadasdsaas", 212));
-        out.add(new Pair<>("sqwdqadas", 42));
-        out.add(new Pair<>("qqsadas", 2));
-        out.add(new Pair<>("s", 12));
-        return out;
+    public ArrayList<Pair<String, Integer>> getScores(int n) throws IOException, ClassNotFoundException {
+        oos.writeUTF("E," + n);
+        return (ArrayList<Pair<String, Integer>>) ois.readObject();
     }
 }

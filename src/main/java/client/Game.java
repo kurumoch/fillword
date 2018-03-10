@@ -34,7 +34,7 @@ public class Game {
     private Timer timer;
     private ServerIO io;
 
-    public Game(Terminal terminal, int num, ServerIO io) throws IOException {
+    public Game(Terminal terminal, int num, ServerIO io) throws IOException, ClassNotFoundException {
         this.terminal = terminal;
         this.io = io;
         this.level = io.getLevel(num);
@@ -182,7 +182,7 @@ public class Game {
         }
     }
 
-    public void startLevel() throws IOException {
+    public void startLevel() throws IOException, ClassNotFoundException {
         terminal.enterPrivateMode();
         drawLevel();
         terminal.setCursorPosition(START_POSITION.withRelative(1, 1));
@@ -234,7 +234,7 @@ public class Game {
         return Math.round(Duration.between(start, Instant.now()).getSeconds());
     }
 
-    private boolean checkWord(String s) {
+    private boolean checkWord(String s) throws IOException {
         return io.submit(s);
     }
 
