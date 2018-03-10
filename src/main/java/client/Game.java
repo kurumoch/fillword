@@ -231,7 +231,7 @@ public class Game {
     }
 
     public int countResults() {
-        return Math.round(Duration.between(start, Instant.now()).getSeconds());
+        return 300 - Math.round(Duration.between(start, Instant.now()).getSeconds());
     }
 
     private boolean checkWord(String s) throws IOException {

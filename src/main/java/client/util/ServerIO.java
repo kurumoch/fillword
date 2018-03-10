@@ -38,8 +38,8 @@ public class ServerIO {
         return ois.readBoolean();
     }
 
-    public void sendResults(String nick, int score) throws IOException {
-        oos.writeUTF("D," + nick + "," + score);
+    public void sendResults(String nick, int score, int n) throws IOException {
+        oos.writeUTF("D," + nick + "," + score + "," + n);
         oos.flush();
     }
 

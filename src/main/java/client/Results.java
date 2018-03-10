@@ -55,7 +55,7 @@ public class Results {
 
             keyStroke = terminal.readInput();
         }
-        io.sendResults(nickname.toString(), results);
+        io.sendResults(nickname.toString(), results, levelNum);
         terminal.clearScreen();
         terminal.setCursorVisible(false);
         ArrayList<Pair<String, Integer>> scores = io.getScores(levelNum);
