@@ -2,10 +2,12 @@ package server;
 
 import client.models.Level;
 import client.models.Pair;
+import server.util.DBUtil;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -24,13 +26,11 @@ public class GameServer {
                 String[] request = ois.readUTF().split(",");
                 switch (request[0]) {
                     case "A":
-                        oos.writeInt(3);
+                        oos.writeInt(DBUtil.getLevelCount());
                         oos.flush();
                         break;
                     case "B":
-                        Level level = new Level(String.join("",
-                                Collections.nCopies(256, "Q")), 4, Integer.valueOf(request[1]));
-                        oos.writeObject(level);
+                        oos.writeObject(DBUtil.getLevel(Integer.valueOf(request[1])));
                         oos.flush();
                         break;
                     case "C":
@@ -52,7 +52,7 @@ public class GameServer {
                         break;
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
