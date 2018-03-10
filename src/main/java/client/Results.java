@@ -1,12 +1,12 @@
 package client;
 
+import client.models.Pair;
 import client.util.ServerIO;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.sun.tools.javac.util.Pair;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,6 +1,8 @@
 package client.models;
 
-public class Level {
+import java.io.Serializable;
+
+public class Level implements Serializable {
     private String field;
     private int wordsToSolve;
     private int number;

@@ -1,7 +1,7 @@
 package client.util;
 
 import client.models.Level;
-import com.sun.tools.javac.util.Pair;
+import client.models.Pair;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,25 +21,31 @@ public class ServerIO {
 
     public int getLevelCount() throws IOException {
         oos.writeUTF("A");
-        return ois.readInt();
+        oos.flush();
+        int c = ois.readInt();
+        return c;
     }
 
     public Level getLevel(int n) throws IOException, ClassNotFoundException {
-        oos.writeUTF("B,1");
+        oos.writeUTF("B," + n);
+        oos.flush();
         return (Level) ois.readObject();
     }
 
     public boolean submit(String s) throws IOException {
         oos.writeUTF("C," + s);
+        oos.flush();
         return ois.readBoolean();
     }
 
     public void sendResults(String nick, int score) throws IOException {
         oos.writeUTF("D," + nick + "," + score);
+        oos.flush();
     }
 
     public ArrayList<Pair<String, Integer>> getScores(int n) throws IOException, ClassNotFoundException {
         oos.writeUTF("E," + n);
+        oos.flush();
         return (ArrayList<Pair<String, Integer>>) ois.readObject();
     }
 }

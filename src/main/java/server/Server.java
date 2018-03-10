@@ -21,8 +21,6 @@ public class Server {
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                 GameServer gameServer = new GameServer(ois, oos);
                 new Thread(gameServer::start).start();
-                ois.close();
-                oos.close();
             }
         } catch (Exception x) {
             x.printStackTrace();
