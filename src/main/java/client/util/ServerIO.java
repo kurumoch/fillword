@@ -1,9 +1,11 @@
 package client.util;
 
 import client.models.Level;
+import com.sun.tools.javac.util.Pair;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class ServerIO {
@@ -31,5 +33,15 @@ public class ServerIO {
 
     public void sendResults(String nick, int score) {
 
+    }
+
+    public ArrayList<Pair<String, Integer>> getScores(){
+        ArrayList<Pair<String, Integer>> out = new ArrayList<>();
+        out.add(new Pair<>("sadas", 2));
+        out.add(new Pair<>("sadasdsaas", 212));
+        out.add(new Pair<>("sqwdqadas", 42));
+        out.add(new Pair<>("qqsadas", 2));
+        out.add(new Pair<>("s", 12));
+        return out;
     }
 }

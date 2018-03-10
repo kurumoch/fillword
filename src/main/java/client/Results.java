@@ -57,11 +57,10 @@ public class Results {
 
             keyStroke = terminal.readInput();
         }
-
-        sendResults();
+        io.sendResults(nickname.toString(), results);
         terminal.clearScreen();
         terminal.setCursorVisible(false);
-        ArrayList<Pair<String, Integer>> scores = loadScores();
+        ArrayList<Pair<String, Integer>> scores = io.getScores();
         graphics.putString(5, 3, "Результаты для уровня " + level, SGR.BOLD);
         for (int i = 0; i < scores.size(); i++) {
             graphics.putString(7, 5 + i * 2, String.valueOf(i) + ". " + scores.get(i).fst + " - " + scores.get(i).snd);
@@ -73,20 +72,6 @@ public class Results {
                 keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.Enter) {
             keyStroke = terminal.readInput();
         }
-    }
-
-    public void sendResults() {
-
-    }
-
-    public ArrayList<Pair<String, Integer>> loadScores() {
-        ArrayList<Pair<String, Integer>> out = new ArrayList<>();
-        out.add(new Pair<>("sadas", 2));
-        out.add(new Pair<>("sadasdsaas", 212));
-        out.add(new Pair<>("sqwdqadas", 42));
-        out.add(new Pair<>("qqsadas", 2));
-        out.add(new Pair<>("s", 12));
-        return out;
     }
 
 
