@@ -226,8 +226,10 @@ public class Game {
         while (keyStroke.getKeyType() != KeyType.Escape &&
                 keyStroke.getKeyType() != KeyType.EOF && level.getWordsToSolve() != 0);
         timer.cancel();
-        Results results = new Results(terminal, level.getNumber(), countResults(), io);
-        results.show();
+        if (keyStroke.getKeyType() == KeyType.Enter) {
+            Results results = new Results(terminal, level.getNumber(), countResults(), io);
+            results.show();
+        }
     }
 
     public int countResults() {
@@ -244,7 +246,7 @@ public class Game {
             markAsSolved();
         }
         selected = new ArrayList<>();
-        selectedWord = "            ";
+        selectedWord = "                ";
         drawLevel();
     }
 
